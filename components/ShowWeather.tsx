@@ -2,6 +2,8 @@
 import { useState, useEffect } from "react";
 import { CreateColor } from "@/lib/CreateColor";
 import { WeatherData, ColorMap } from "@/types/weather";
+import SearchCity from "@/utils/SearchCity";
+import type { CityOptionType, onSearchChangeType } from "@/types/weather";
 
 export default function ShowWeather() {
     const [city, setCity] = useState<string>("");
@@ -9,18 +11,25 @@ export default function ShowWeather() {
     const [gradient, setGradient] = useState<string>();
     const [weather, setWeather] = useState<WeatherData>();
 
+    const handleSearchChange: onSearchChangeType = (selectedOption: CityOptionType | null) => {
+        setCity(selectedOption?.label || "");
+        console.log(selectedOption);
+    };
+
     useEffect(() => {
         const getGradient = async () => {
-            const gc = [
-                colors?.darkest,
-                colors?.darker,
-                colors?.dark,
-                colors?.sun,
-                colors?.light,
-                colors?.lighter,
-                colors?.lightest
-            ].join(", ");
-            setGradient(gc);
+            if (colors) {
+                const gc = [
+                    colors?.darkest,
+                    colors?.darker,
+                    colors?.dark,
+                    colors?.sun,
+                    colors?.light,
+                    colors?.lighter,
+                    colors?.lightest
+                ].join(", ");
+                setGradient(gc);
+            }
         }
         getGradient();
     }, [colors]);
@@ -49,33 +58,22 @@ export default function ShowWeather() {
 
     return (
         <div className="flex flex-col w-full">
-            <div className="flex">
-                <input
-                    type="text"
-                    value={city}
-                    className="border border-stone-500 rounded-md w-fit p-0"
-                    onChange={(e) => setCity(e.target.value)}
-                />
+            <div className="flex gap-3">
+                <SearchCity onSearchChange={handleSearchChange} />
                 <button
                     onClick={() => getWeather()}
                     className="bg-stone-500 text-white rounded-md w-fit px-2 py-1"
                 >
-                    Get Weather
+                    Weather
                 </button>
             </div>
-            <p className="text-sm w-full">
+            <p className="text-sm w-full overflow-auto">
                 {JSON.stringify(weather)}
             </p>
             <div
                 className="w-full h-10"
                 style={{ background: `linear-gradient(to right, ${gradient})`, }}
-            >
-                {/* {colors && Object.entries(colors as ColorMap).map(([key, color]) => (
-                    <div key={key} style={{ margin: '10px', padding: '10px', backgroundColor: color }}>
-                        <strong>{key}</strong>: {color}
-                    </div>
-                ))} */}
-            </div>
+            />
         </div>
     )
 }

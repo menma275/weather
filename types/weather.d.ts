@@ -59,3 +59,14 @@ type ColorName = 'darkest' | 'darker' | 'dark' | 'sun' | 'light' | 'lighter' | '
 export interface ColorMap {
   [key in ColorName]: string;
 }
+
+export type CityOptionType = {
+  value: string;
+  label: string;
+}
+
+export type onSearchChangeType = (selectedOption: CityOptionType | null) => void
+
+export interface SearchCityProps {
+    onSearchChange: onSearchChangeType;
+}
